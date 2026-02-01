@@ -34,7 +34,7 @@ Next.js + TypeScript app for loan applications, underwriting results, and lender
 ## Running with the backend
 
 1. Start the **backend** first: from `kaaj-backend/`, activate the venv (`source .venv/bin/activate`) and run `python run.py` (or `python3 run.py`).
-2. Then start the frontend from `kaaj-frontend/` with `npm run dev`. The app will call the API for applications, underwriting, and lenders.
+2. Then start the frontend from `kaaj-frontend/` with `npm start`. The app will call the API for applications, underwriting, and lenders.
 
 ## Main flows
 
