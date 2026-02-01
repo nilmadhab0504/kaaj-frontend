@@ -1,26 +1,166 @@
 @import "tailwindcss";
+@source "../../node_modules/rizzui/dist";
+@plugin "@tailwindcss/forms";
+
+/* Dark mode variant - required for RizzUI */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: oklch(99.2% 0.002 247); /* lighter gray */
+  --foreground: oklch(23% 0.02 257); /* #0f172a */
+  --muted: oklch(55% 0.02 257); /* #64748b */
+  --card: oklch(100% 0 0); /* #ffffff */
+  --muted-foreground: oklch(55% 0.02 257);
+
+  --border-radius: 0.75rem; /* 12px */
+  --border-width: 0.0625rem; /* 1px */
+  --border-color: oklch(89% 0.01 257); /* #e2e8f0 */
+
+  --text-primary: oklch(23% 0.02 257);
+  --text-secondary: oklch(55% 0.02 257);
+
+  /* Primary - teal accent for lender/finance feel */
+  --primary-lighter: oklch(94% 0.02 175);
+  --primary: oklch(55% 0.12 175); /* #0d9488 */
+  --primary-dark: oklch(45% 0.11 175); /* #0f766e */
+  --primary-foreground: oklch(100% 0 0); /* #ffffff */
+
+  /* Secondary - blue */
+  --secondary-lighter: oklch(91.66% 0.04 257.51);
+  --secondary: oklch(50% 0.2 258);
+  --secondary-dark: oklch(45% 0.18 258);
+  --secondary-foreground: oklch(100% 0 0);
+
+  /* Danger */
+  --red-lighter: oklch(92% 0.04 25);
+  --red: oklch(55% 0.2 25); /* #dc2626 */
+  --red-dark: oklch(45% 0.18 25);
+
+  /* Warning */
+  --orange-lighter: oklch(95% 0.04 75);
+  --orange: oklch(65% 0.15 75); /* #d97706 */
+  --orange-dark: oklch(50% 0.12 75);
+
+  /* Info */
+  --blue-lighter: oklch(91.66% 0.0404 257.51);
+  --blue: oklch(57.31% 0.2144 258.25);
+  --blue-dark: oklch(51.58% 0.1888 258.27);
+
+  /* Success */
+  --green-lighter: oklch(92.79% 0.086 155.61);
+  --green: oklch(55% 0.15 155); /* #059669 */
+  --green-dark: oklch(45% 0.12 155);
 }
 
+[data-theme="dark"] {
+  --background: oklch(18% 0.02 257); /* #0f172a */
+  --card: oklch(22% 0.02 257); /* #1e293b */
+  --foreground: oklch(98.5% 0.002 247); /* #f8fafc */
+  --muted: oklch(60% 0.02 257);
+  --muted-foreground: oklch(70% 0.02 257);
+
+  --border-color: oklch(30% 0.02 257);
+
+  --text-primary: oklch(98.5% 0 0);
+  --text-secondary: oklch(70% 0.02 257);
+
+  --primary-lighter: oklch(25% 0.04 175);
+  --primary: oklch(70% 0.1 175); /* #14b8a6 */
+  --primary-dark: oklch(75% 0.08 175); /* #2dd4bf */
+  --primary-foreground: oklch(15% 0.02 257);
+
+  --secondary-lighter: oklch(26% 0.09 258);
+  --secondary-dark: oklch(85% 0.07 258);
+
+  --red-lighter: oklch(30% 0.08 25);
+  --red-dark: oklch(75% 0.1 25);
+
+  --orange-lighter: oklch(28% 0.06 75);
+  --orange-dark: oklch(88% 0.1 85);
+
+  --blue-lighter: oklch(32.05% 0.0873 254.4);
+  --blue-dark: oklch(90.53% 0.0611 225.72);
+
+  --green-lighter: oklch(27.23% 0.0672 152.71);
+  --green-dark: oklch(92.79% 0.086 155.61);
+}
+
+/* Map CSS variables to Tailwind */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --border-radius: var(--border-radius);
+  --color-border: var(--border-color);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+
+  --color-primary-lighter: var(--primary-lighter);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary-lighter: var(--secondary-lighter);
+  --color-secondary: var(--secondary);
+  --color-secondary-dark: var(--secondary-dark);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-red-lighter: var(--red-lighter);
+  --color-red: var(--red);
+  --color-red-dark: var(--red-dark);
+
+  --color-orange-lighter: var(--orange-lighter);
+  --color-orange: var(--orange);
+  --color-orange-dark: var(--orange-dark);
+
+  --color-blue-lighter: var(--blue-lighter);
+  --color-blue: var(--blue);
+  --color-blue-dark: var(--blue-dark);
+
+  --color-green-lighter: var(--green-lighter);
+  --color-green: var(--green);
+  --color-green-dark: var(--green-dark);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Autofill styles */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  -webkit-text-fill-color: inherit !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: inherit;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Consistent rounded borders for all buttons */
+button,
+[role="button"] {
+  border-radius: var(--border-radius) !important;
+}
+
+/* Rounded borders for input areas */
+input,
+textarea,
+select {
+  border-radius: var(--border-radius) !important;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
 }
