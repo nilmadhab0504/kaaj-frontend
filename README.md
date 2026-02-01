@@ -5,7 +5,7 @@ Next.js + TypeScript app for loan applications, underwriting results, and lender
 ## Prerequisites
 
 - Node.js 18+
-- Backend API running (see [backend/README.md](../backend/README.md)). Default: `http://localhost:3005`.
+- Backend API running (see [kaaj-backend/README.md](../kaaj-backend/README.md)). Default: `http://localhost:3005`.
 
 ## Setup
 
@@ -18,18 +18,23 @@ Next.js + TypeScript app for loan applications, underwriting results, and lender
    ```bash
    echo "NEXT_PUBLIC_API_URL=http://localhost:3005" >> .env.local
    ```
-
-3. Start the dev server:
+3. Build the application 
    ```bash
-   npm run dev
+   npm run build
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000).
+
+4. Start the server:
+   ```bash
+   npm start
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000).
 
 ## Running with the backend
 
-1. Start the **backend** first (from `backend/`: `python run.py`).
-2. Then start the frontend (`npm run dev`). The app will call the API for applications, underwriting, and lenders.
+1. Start the **backend** first: from `kaaj-backend/`, activate the venv (`source .venv/bin/activate`) and run `python run.py` (or `python3 run.py`).
+2. Then start the frontend from `kaaj-frontend/` with `npm run dev`. The app will call the API for applications, underwriting, and lenders.
 
 ## Main flows
 
