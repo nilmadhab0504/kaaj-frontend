@@ -7,6 +7,23 @@ import type {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3005";
 
+function formatApiError(detail: unknown, statusText: string): string {
+  if (Array.isArray(detail)) {
+    return (
+      "Validation failed: " +
+      detail
+        .map(
+          (e: { loc?: unknown[]; msg?: string }) =>
+            e.loc && Array.isArray(e.loc) ? e.loc.join(".") + ": " + (e.msg ?? "") : e.msg ?? ""
+        )
+        .filter(Boolean)
+        .join("; ")
+    );
+  }
+  if (typeof detail === "string") return detail;
+  return statusText;
+}
+
 async function fetchApi<T>(
   path: string,
   options?: RequestInit
@@ -21,7 +38,8 @@ async function fetchApi<T>(
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error((err as { detail?: string }).detail || res.statusText);
+    const detail = (err as { detail?: unknown }).detail;
+    throw new Error(formatApiError(detail, res.statusText));
   }
   return res.json() as Promise<T>;
 }
@@ -46,21 +64,10 @@ export async function getApplication(id: string): Promise<LoanApplication | null
 export async function createApplication(
   data: Omit<LoanApplication, "id" | "createdAt" | "updatedAt" | "status">
 ): Promise<LoanApplication> {
-  try {
-    return await fetchApi<LoanApplication>("/api/applications", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  } catch {
-    const app: LoanApplication = {
-      ...data,
-      id: `app-${Date.now()}`,
-      status: "draft",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    return app;
-  }
+  return fetchApi<LoanApplication>("/api/applications", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
 export async function submitApplication(id: string): Promise<LoanApplication> {

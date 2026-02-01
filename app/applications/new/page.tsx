@@ -48,6 +48,13 @@ const stateOptions: SelectOption[] = US_STATES.map((s) => ({ value: s, label: s 
 const equipmentOptions: SelectOption[] = EQUIPMENT_TYPES.map((t) => ({ value: t, label: t }));
 const termOptions: SelectOption[] = LOAN_TERMS.map((n) => ({ value: n, label: String(n) }));
 
+/** Get string value from a Select: either a plain string or an option object { value, label }. */
+function selectValue(v: string | { value?: string; label?: string } | undefined): string {
+  if (v == null) return "";
+  if (typeof v === "string") return v;
+  return String(v.value ?? "");
+}
+
 export default function NewApplicationPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
@@ -76,7 +83,11 @@ export default function NewApplicationPage() {
     setSaving(true);
     try {
       const app = await createApplication({
-        business,
+        business: {
+          ...business,
+          industry: selectValue(business.industry),
+          state: selectValue(business.state),
+        },
         guarantor,
         businessCredit: Object.keys(businessCredit).some(
           (k) =>
@@ -85,7 +96,13 @@ export default function NewApplicationPage() {
         )
           ? businessCredit
           : undefined,
-        loanRequest,
+        loanRequest: {
+          ...loanRequest,
+          equipment: {
+            ...loanRequest.equipment,
+            type: selectValue(loanRequest.equipment?.type),
+          },
+        },
       });
       router.push(`/applications/${app.id}`);
     } catch (err) {
