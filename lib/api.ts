@@ -96,11 +96,22 @@ export async function getUnderwritingRun(runId: string): Promise<UnderwritingRun
   }
 }
 
+export async function getApplicationRuns(
+  applicationId: string
+): Promise<UnderwritingRun[]> {
+  try {
+    return await fetchApi<UnderwritingRun[]>(
+      `/api/applications/${applicationId}/runs`
+    );
+  } catch {
+    return [];
+  }
+}
+
 export async function getMatchResults(applicationId: string): Promise<LenderMatchResult[]> {
   try {
-    const run = await fetchApi<UnderwritingRun[]>(
-      `/api/applications/${applicationId}/runs`
-    ).then((runs) => runs[0]);
+    const runs = await getApplicationRuns(applicationId);
+    const run = runs[0];
     return run?.results ?? [];
   } catch {
     return getMockMatchResults();

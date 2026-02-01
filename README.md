@@ -1,37 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lender Matching Platform – Frontend
 
-## Getting Started
+Next.js + TypeScript app for loan applications, underwriting results, and lender policy management.
 
-First, run the development server:
+## Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 18+
+- Backend API running (see [backend/README.md](../backend/README.md)). Default: `http://localhost:3005`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. (Optional) Configure API URL. The app defaults to `http://localhost:3005`. To override:
+   ```bash
+   echo "NEXT_PUBLIC_API_URL=http://localhost:3005" >> .env.local
+   ```
 
-## Learn More
+3. Start the dev server:
+   ```bash
+   npm run dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Open [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Running with the backend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Start the **backend** first (from `backend/`: `python run.py`).
+2. Then start the frontend (`npm run dev`). The app will call the API for applications, underwriting, and lenders.
 
-## Deploy on Vercel
+## Main flows
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# kaaj-frontend
+- **Applications** – Create application, view detail, submit, run underwriting, view results (eligible/ineligible lenders with criteria breakdown).
+- **Results** – Per-lender fit score, best program, rejection reasons, and per-criterion met/not met with expected vs actual.
+- **Lenders** – List lenders, view/edit lender, add/edit/delete programs and criteria. Add new lender from PDF via “Add lender” and Parse PDF.

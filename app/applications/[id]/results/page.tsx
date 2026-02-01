@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getApplication, getMatchResults } from "@/lib/api";
+import { getApplication, getApplicationRuns, getMatchResults } from "@/lib/api";
 import { Card, CardHeader } from "@/components/ui";
 import type { LenderMatchResult, CriterionResult } from "@/types";
 
@@ -28,12 +28,16 @@ export default async function MatchResultsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [app, results] = await Promise.all([
+  const [app, runs, results] = await Promise.all([
     getApplication(id),
+    getApplicationRuns(id),
     getMatchResults(id),
   ]);
 
   if (!app) notFound();
+
+  const latestRun = runs[0];
+  const isRunning = latestRun?.status === "running";
 
   const eligible = results.filter((r) => r.eligible);
   const ineligible = results.filter((r) => !r.eligible);
@@ -65,57 +69,70 @@ export default async function MatchResultsPage({
         </Link>
       </div>
 
-      <Card>
-        <CardHeader title="Summary" />
-        <div className="flex flex-wrap gap-6 text-sm">
-          <div>
-            <span className="text-muted-foreground">Eligible lenders </span>
-            <span className="font-semibold text-green">{eligible.length}</span>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Not eligible </span>
-            <span className="font-semibold text-foreground">
-              {ineligible.length}
-            </span>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Total evaluated </span>
-            <span className="font-semibold text-foreground">{results.length}</span>
-          </div>
-        </div>
-      </Card>
+      {isRunning ? (
+        <Card className="border-blue/30 bg-blue-lighter/20">
+          <p className="text-sm font-medium text-blue">
+            Underwriting in progress. Results will appear when the run completes.
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Refresh the page in a moment to see results.
+          </p>
+        </Card>
+      ) : (
+        <>
+          <Card>
+            <CardHeader title="Summary" />
+            <div className="flex flex-wrap gap-6 text-sm">
+              <div>
+                <span className="text-muted-foreground">Eligible lenders </span>
+                <span className="font-semibold text-green">{eligible.length}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Not eligible </span>
+                <span className="font-semibold text-foreground">
+                  {ineligible.length}
+                </span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Total evaluated </span>
+                <span className="font-semibold text-foreground">{results.length}</span>
+              </div>
+            </div>
+          </Card>
 
-      <section>
-        <h2 className="mb-4 text-lg font-semibold text-foreground">
-          Best matches
-        </h2>
-        <div className="space-y-4">
-          {sortedEligible.length === 0 ? (
-            <Card>
-              <p className="text-muted-foreground">
-                No lenders met all criteria for this application. Review
-                ineligible lenders below for specific reasons.
-              </p>
-            </Card>
-          ) : (
-            sortedEligible.map((match) => (
-              <MatchCard key={match.lenderId} match={match} />
-            ))
+          <section>
+            <h2 className="mb-4 text-lg font-semibold text-foreground">
+              Best matches
+            </h2>
+            <div className="space-y-4">
+              {sortedEligible.length === 0 ? (
+                <Card>
+                  <p className="text-muted-foreground">
+                    No lenders met all criteria for this application. Review
+                    ineligible lenders below for specific reasons.
+                  </p>
+                </Card>
+              ) : (
+                sortedEligible.map((match) => (
+                  <MatchCard key={match.lenderId} match={match} />
+                ))
+              )}
+            </div>
+          </section>
+
+          {ineligible.length > 0 && (
+            <section>
+              <h2 className="mb-4 text-lg font-semibold text-foreground">
+                Not eligible
+              </h2>
+              <div className="space-y-4">
+                {ineligible.map((match) => (
+                  <MatchCard key={match.lenderId} match={match} />
+                ))}
+              </div>
+            </section>
           )}
-        </div>
-      </section>
-
-      {ineligible.length > 0 && (
-        <section>
-          <h2 className="mb-4 text-lg font-semibold text-foreground">
-            Not eligible
-          </h2>
-          <div className="space-y-4">
-            {ineligible.map((match) => (
-              <MatchCard key={match.lenderId} match={match} />
-            ))}
-          </div>
-        </section>
+        </>
       )}
     </div>
   );
@@ -147,8 +164,8 @@ function MatchCard({ match }: { match: LenderMatchResult }) {
           )}
           {match.rejectionReasons.length > 0 && (
             <ul className="mt-2 list-inside list-disc text-sm text-red">
-              {match.rejectionReasons.map((reason, i) => (
-                <li key={i}>{reason}</li>
+              {match.rejectionReasons.map((reason, idx) => (
+                <li key={`${match.lenderId}-rejection-${idx}-${reason.slice(0, 30)}`}>{reason}</li>
               ))}
             </ul>
           )}
