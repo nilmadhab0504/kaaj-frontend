@@ -193,15 +193,13 @@ export default function NewLenderPage() {
           {parsing ? "Parsing…" : "Choose PDF"}
         </Button>
         {parseSuccess && (
-          <Alert color="success" size="md" className="mt-3">
-            ✓ PDF parsed successfully. {programs.length} program(s) extracted.
+          <> PDF parsed successfully. {programs.length} program(s) extracted.
             Review and edit below before submitting.
-          </Alert>
+          </>
         )}
         {parseError && (
-          <Alert color="danger" size="md" className="mt-3">
-            {parseError}
-          </Alert>
+          <>{parseError}
+          </>
         )}
       </Card>
 
